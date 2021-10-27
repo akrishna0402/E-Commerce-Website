@@ -53,6 +53,7 @@ class DirectoryMenu extends React.Component{
                     imageUrl={imageUrl}
                     size={size}
                     linkUrl={linkUrl}
+                    key={id}
                     />
                   )
                 })

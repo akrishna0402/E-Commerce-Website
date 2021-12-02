@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route , Redirect } from 'react-router-dom';
 
 import './App.css';
 
@@ -16,7 +16,7 @@ class App extends React.Component {
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    const {setcurrentuser} = this.props;
+    const { setcurrentuser } = this.props;
 
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
@@ -30,7 +30,7 @@ class App extends React.Component {
         });
       }
 
-      setcurrentuser({ userAuth });
+      setcurrentuser(userAuth);
     });
   }
 
@@ -39,21 +39,26 @@ class App extends React.Component {
   }
 
   render() {
+    const { currentUser } = this.props;
     return (
       <div>
         <Header />
         <Switch>
           <Route exact path='/' component={HomePage} />
           <Route path='/shop' component={ShopPage} />
-          <Route path='/signin' component={SignInAndSignUpPage} />
+          <Route exact path='/signin' render={() => currentUser ? <Redirect to='/' /> : <SignInAndSignUpPage />} />
         </Switch>
       </div>
     );
   }
 }
 
+const mapStateToProps = state => ({
+  currentUser: state.user.currentUser
+});
+
 const mapdispatchToProp = dispatch => ({
   setcurrentuser : user => dispatch(setcurrentuser(user))
 })
 
-export default connect(null , mapdispatchToProp )(App);
+export default connect(mapStateToProps , mapdispatchToProp )(App);
